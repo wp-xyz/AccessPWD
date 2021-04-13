@@ -38,14 +38,27 @@ implementation
 
 { Extracts the password of a password-protected MDB database.
   Taken from: Delphi3000, Article ID 3663: "How to retrieve the password of a
-  protected Access database?" (Sunish Isaac) }
+  protected Access database?" (Sunish Isaac)  --- no longer available
+
+  There is another short article (with C code) at
+  https://www.nirsoft.net/vb/accpass.html
+
+  The password is encrypted with simple XOR operation.
+  Function works only with Access 95 or 97.
+  }
 function ExtractAccessPassword(const AFileName: string): ansistring;
 const
-  key: packed array[0..12] of byte
-    = ($86, $FB, $EC, $37, $5D, $44, $9C, $FA, $C6, $5E, $28, $E6, $13);
+  MAX_KEY = 17;
+  {
+  key: packed array[0..12] of byte = (
+    $86, $FB, $EC, $37, $5D, $44, $9C, $FA, $C6, $5E, $28, $E6, $13
+  );
+  }
+  key: packed array[0..MAX_KEY] of byte = (     // these are from the NirSoft site
+    $86, $FB, $EC, $37, $5D, $44, $9C, $FA, $C6, $5E, $28, $E6, $13, $B6, $8A, $60, $54, $94);
 var
   stream: TFileStream;
-  buffer: array[0..12] of byte;
+  buffer: array[0..MAX_KEY] of byte;
   i: integer;
   ch: ansichar;
 begin
